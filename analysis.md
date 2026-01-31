@@ -10,6 +10,7 @@
 
 3. **notify() calls**  
    What happens if a producer skips `cv_not_empty.notify()` after adding, or a consumer skips `cv_not_full.notify()` after removing?
+   This would break the wakup mechanism. For example, if consumer checks whether the buffer is empty and it returns True, the consumer worker invokes the wait method. Then the producers can put items in the buffer but they do not notify the consumers. In this case, producers can reach the buffer limit and consumers can still be asleep. This will lead to a situation similar to the circular wait (but imposed by lack of awareness). On the other hand, if producers check for empty slots in the buffer and there were none, they invoke the wait method. Then consumers can take the items from the buffer, but if they do not notify the producers than producers can stay asleep. The situation is opposite in the direction but the same in the deadlock nature as the previous one. 
 
 4. **Mutual exclusion**  
    Describe the incorrect behaviours if `with self.lock:` is removed from `put` and `get` (e.g., lost items, duplicates, corrupted counts, out-of-order state).
