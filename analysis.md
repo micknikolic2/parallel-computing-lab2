@@ -6,6 +6,7 @@
 
 2. **wait() loop**  
    Explain why `wait()` must be inside a `while` that rechecks the condition. What can go wrong with an `if` (spurious wakeups, races after notify)?
+   The logic can face two edge scenarious if we use the conditional "if". One is the spurious wakup and it refers to a situation in which the thread can wake up for no strong reason (without notify() been invoked). In this situation, if we used the conditional "if" it will proceed to thread's main logic and raise the error or broke the program (and even if the program is monadic it will write the exception in the writer monad and broke the composition). The second situation happens due to threads racing after the condition is satisfied (for example, another thread can change the state before this thread can acquire the resource).
 
 3. **notify() calls**  
    What happens if a producer skips `cv_not_empty.notify()` after adding, or a consumer skips `cv_not_full.notify()` after removing?
