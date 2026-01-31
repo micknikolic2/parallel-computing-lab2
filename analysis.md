@@ -2,6 +2,7 @@
 
 1. **Condition variables**  
    Why are two separate conditions (`cv_not_full`, `cv_not_empty`) used with the same lock? Could one condition work, and what are the trade-offs?
+   The conditions are used with the same lock as they work with the same shared state (buffer and its lenght). We have two conditions because we have two different waiting reasons (i.e. condition.wait) and the linked wake signals. One is used to make the producer waits (if the buffer is full) and the other one is used to make the consumer waits (if the buffer is empty). Whether the one condition would work depends on how we define the "work". It can work in a sense that the core process can execute. However, it will lead to busy waiting and a lot of overhead (e.g. CPU usage, context switching, etc.).
 
 2. **wait() loop**  
    Explain why `wait()` must be inside a `while` that rechecks the condition. What can go wrong with an `if` (spurious wakeups, races after notify)?
