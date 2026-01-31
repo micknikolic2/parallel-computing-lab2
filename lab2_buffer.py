@@ -36,13 +36,13 @@ class BoundedBuffer:
     def put(self, item):
         """Add an item to the buffer. Blocks if the buffer is full."""
         # --- TODO: Task 2 - Implement put logic ---
-        # with self.lock:
-        #     while len(self.buffer) == self.capacity:
-        #         print("Producer waiting: buffer full")
-        #         self.cv_not_full.wait()
-        #     self.buffer.append(item)
-        #     print(f"Produced {item} (size={len(self.buffer)}/{self.capacity})")
-        #     self.cv_not_empty.notify()
+        with self.lock:
+            while len(self.buffer) == self.capacity:
+                print("Producer waiting: buffer full")
+                self.cv_not_full.wait()
+            self.buffer.append(item)
+            print(f"Produced {item} (size={len(self.buffer)}/{self.capacity})")
+            self.cv_not_empty.notify()
         # --- End TODO ---
         return  # Placeholder so starter code runs
 
@@ -50,14 +50,14 @@ class BoundedBuffer:
         """Remove and return an item from the buffer. Blocks if the buffer is empty."""
         item = None
         # --- TODO: Task 3 - Implement get logic ---
-        # with self.lock:
-        #     while len(self.buffer) == 0:
-        #         print("Consumer waiting: buffer empty")
-        #         self.cv_not_empty.wait()
-        #     item = self.buffer.popleft()
-        #     print(f"Consumed {item} (size={len(self.buffer)}/{self.capacity})")
-        #     self.cv_not_full.notify()
-        # return item
+        with self.lock:
+            while len(self.buffer) == 0:
+                print("Consumer waiting: buffer empty")
+                self.cv_not_empty.wait()
+            item = self.buffer.popleft()
+            print(f"Consumed {item} (size={len(self.buffer)}/{self.capacity})")
+            self.cv_not_full.notify()
+        return item
         # --- End TODO ---
         return item  # Placeholder so starter code runs
 
